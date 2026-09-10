@@ -6,6 +6,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -34,11 +35,15 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
+        if (exchange.getRequest().getMethod() == HttpMethod.OPTIONS) {
+            return chain.filter(exchange);
+        }
         // Get the request path
         // Example:
         // /api/v1/auth/login
         // /questions
         String path = exchange.getRequest().getURI().getPath();
+
 
         /**
          * Public endpoints:
@@ -67,13 +72,17 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
          * OR does not start with "Bearer ",
          * reject the request with 401 Unauthorized.
          */
+        String token = authHeader.substring(7);
+
+        System.out.println("Gateway received Authorization header");
+        System.out.println("Gateway token valid: " + jwtUtil.validateToken(token));
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
         }
 
         // Remove "Bearer " prefix
-        String token = authHeader.substring(7);
+//        String token = authHeader.substring(7);
 
         /**
          * Validate JWT.

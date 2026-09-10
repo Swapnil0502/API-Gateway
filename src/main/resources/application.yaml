@@ -1,9 +1,9 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 spring:
   application:
-    name: api-gateway
+    name: API-GATEWAY
 
   cloud:
     gateway:
@@ -18,10 +18,25 @@ spring:
           predicates:
             - Path=/api/question/**
 
+    globalcors:
+      cors-configurations:
+        '[/**]':
+          allowedOrigins:
+            - "${FRONTEND_URL:http://localhost:5173}"
+          allowedMethods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          allowedHeaders:
+            - "*"
+          allowCredentials: true
+
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
     register-with-eureka: true
     fetch-registry: true
 
@@ -31,4 +46,4 @@ logging:
     reactor.netty: DEBUG
 
 jwt:
-  secret: mySuperSecretKeyForJwtAuthenticationMustBeAtLeast32BytesLong12345
+  secret: ${JWT_SECRET}
