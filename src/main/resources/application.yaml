@@ -2,6 +2,9 @@ server:
   port: ${SERVER_PORT:8080}
 
 spring:
+  config:
+    import: optional:file:.env[.properties]
+
   application:
     name: API-GATEWAY
 
