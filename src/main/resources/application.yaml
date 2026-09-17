@@ -20,22 +20,6 @@ spring:
           uri: lb://QUESTION-SERVICE
           predicates:
             - Path=/api/question/**
-
-    globalcors:
-      cors-configurations:
-        '[/**]':
-          allowedOrigins:
-            - "${FRONTEND_URL:http://localhost:5173}"
-          allowedMethods:
-            - GET
-            - POST
-            - PUT
-            - DELETE
-            - OPTIONS
-          allowedHeaders:
-            - "*"
-          allowCredentials: true
-
 eureka:
   client:
     service-url:
